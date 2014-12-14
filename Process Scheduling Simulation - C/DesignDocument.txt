@@ -1,0 +1,121 @@
+CSCI3040 - Operating Systems - FINAL PROJECT DESIGN DOCUMENT
+KEN SANDALA
+
+1. PURPOSE - The purspose of this program is to simulate various process scheduling algorithms.  When more than one process demands run time on the CPU, the scheduler decides which process gets to run on the CPU and when.  
+The four types of CPU schedulers demonstrated in this program are First Come First Served, Shortest Job First, Non-Preemptive Priority, and Round Robin.  Each of these algorithms has its own strengths and weaknesses. To demonstrate how each algorithm performs, the program measures four aspects of their performance: total running time, average wait time, average turnaround time, and thouroghput in processes per second.
+
+
+2. DEFINITIONS
+
+CPU - Central Processing Unit
+
+First Come First serve (FCFS) - Processes are run by the CPU in the order that they arrive at the scheduler
+
+Shortest Job First (SJF) - Processes are run in the order of the length that they require the CPU, from least to greatest
+
+Non-Preemptive Priority (NPP) - Processes are run in the order of their priority.  Values range from 0 to 99, and lower values represent greater priority.
+
+Round Robin (RR) - Each process is given a small amount of time to run before the next process is switched to.  The processes are cycled through until all are finished.
+
+
+3. REFERENCES
+https://laroche.blackboard.com/bbcswebdav/pid-125720-dt-content-rid-447103_1/courses/SU14-CSCI3040-01/SU14-CSCI3040-01%20-%20Operating%20Systems%20-%20Final%20Project%281%29.pdf
+
+http://man7.org/linux/man-pages/man3/scanf.3.html
+
+
+
+4. OVERALL DESCRIPTION
+
+a. Software Description and Rationale
+This software demonstrates various algorithms that can be used to schedule processes' access to a computer's CPU.  It generates data to simulate processes based on an input file, and then runs each algorithm on that data.
+
+b. Software Features
+The program can run each of the four algorithms and output their total running time, average wait time, average turnaround time, and thouroghput in processes per second.
+
+c. User Characteristics
+This program may be used by anyone who wishes to examine how various scheduling algorithms function and perform.
+
+d. Constraints
+The program can only run when provided with a .txt file that is properly formatted for it.  The file must begin with a single integer, and every line after that must contain four integers separated by a space.  These four integers represent process ID, process priority, process arrival time, and process CPU burst duration.  The final line must end with a newline character.
+
+e. Assumptions and Dependencies
+This program was written and tested in Ubuntu 12.04 using the GNU Compiler Collection.  The program may perforom differently when run on other operating systems, or when compiled with a different compiler.
+The program assumes that processes are listed in the order that they arrive at the CPU.  If they are listed out of order the FCFS algorithm will not run correctly.
+This program requires access to a .txt file (described above) and priorityqueue.h.
+
+5. DESIGN SPECIFICS
+
+a. Files
+This program requires the files project.c, processes.txt and priorityqueue.h
+
+b. Functions
+
+int priority_cmp(const void * element1, const void * element2)
+Compares two processes by their priority, returning a positive value if the first priority is lesser, 0 if the priority is equal, and a negative value if the second priority is lesser.
+const void * element1 : The first priority to compare
+const void * element2 : The second priority to compare
+
+
+int burst_cmp(const void * element1, const void * element2)
+Compares two processes by their burst, returning a positive value if the first burst is lesser, 0 if the burst is equal, and a negative value if the second burst is lesser.
+const void * element1 : The first burst to compare
+const void * element2 : The second burst to compare
+
+void scheduleFCFS(process p[], int length)
+Simulates a 'First Come, First Served' algorithm.  Processes are run in the order that they arrive at the scheduler.
+process p[] : An array of processes to run the algorithm on
+int length : The length of the process array
+
+void scheduleSJF(process p[], int length)
+Simulates a 'Shortest Job First' algorithm.  The scheduler arranges the processes by their burst time, and runs them in order from least to greatest.
+process p[] : An array of processes to run the algorithm on
+int length : The length of the process array
+
+void scheduleNPP(process p[], int length)
+Simulates a Non-Preemptive Priority algorithm.  The scheduler arranges the processes by their priority, and runs them in order, with the smallest priority being run first.
+process p[] : An array of processes to run the algorithm on
+int length : The length of the process array
+
+void scheduleRR(process p[], int length)
+Simulates a 'Round Robin" algorithm.  Each of the processes is given a certain quantum, or length of time, to run.  The scheduler loops through the processes.  Once a process has finished, it is removed from the loop.  The algorithm ends when all processes have finished.
+process p[] : An array of processes to run the algorithm on
+int length : The length of the process array
+
+6. TESTING
+This program was tested with various forms of the p.txt file.
+
+7. DEVELOPER'S GUIDE
+When running this code, you must provide the name of the formatted .txt file as an argument.
+in order to quickly generate different process files, the following code can be used:
+
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <time.h> 
+ 
+int gen_random( int min, int max ) { 
+ return min + rand( ) % max; 
+} 
+ 
+void gen_scenario( int i ) { 
+ int j = 0; 
+ printf( "%d\n", i ); 
+ int j1;
+ for( j1 = 0; j1 < i; j1++ ) { 
+ int k = gen_random( 0, 100 ); 
+ int l = gen_random( 5, 100 ); 
+ int i1 = gen_random( 0, 99 ); 
+ printf( "%d %d %d %d\n", j1 + 1, i1, j + k, l ); 
+ j += k; 
+ } 
+} 
+ 
+int main( int argc, char* argv[ ] ) { 
+ srand( time( NULL ) ); 
+ if( argc > 1 ) { 
+ gen_scenario( atoi( argv[ 1 ] ) ); 
+ } else { 
+ gen_scenario( 10 ); 
+ } 
+ return 0; 
+} 
